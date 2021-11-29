@@ -28,6 +28,11 @@
 
 ## 2. S3
 
+- S3 정적 웹 호스팅 주소 : bucket-name.s3-website-ap-northeast-2.amazonaws.com
+- S3 버킷의 유효한 엔드포인트
+    - bucket-name.s3.amazonaws.com/object
+    - s3.region.amazonaws.com/object
+
 ### 1. Amazon S3 데이터 일관성 모델
 
 Amazon S3는 모든 AWS 리전의 Amazon S3 버킷에 있는 객체의 PUT 및 DELETE 요청에 대해 강력한 쓰기 후 읽기(read-after-write) 일관성을 제공한다. 이것은 새 객체에 대한 쓰기와, 기존 객체 및 DELETE 요청을 덮어쓰는 PUT 요청 모두에 적용된다. 또한 Amazon S3 Select, Amazon S3 액세스 제어 목록(ACL), Amazon S3 객체 태그, 객체 메타데이터(예: HEAD 객체)에 대한 읽기 작업은 매우 일관적이다.
@@ -119,6 +124,10 @@ VPC는 리전의 모든 가용 영역에 적용된다. VPC를 만든 후, 각 �
 
 ## 7. ELB
 
+- ELB의 SSL협상을 위한 정책 2가지
+    1. predefined security policies
+    2. custom security policies
+
 ### 1. Network Load Balancer
 
 NLB는 개방형 시스템간 상호 연결(OSI) 모델의 4계층에서 작동한다. 초당 수백만 개의 요청을 처리할 수 있다. 로드밸런서가 연결 요청을 받으면 기본 규칙의 대상 그룹에서 대상을 선택한다. 리스너 구성에 지정된 포트에서 선택한 대상에 대한 TCP 연결을 열려고 시도한다.
@@ -131,6 +140,11 @@ NLB는 개방형 시스템간 상호 연결(OSI) 모델의 4계층에서 작동�
 
 ALB는 요청 수준(7계층)에서 작동하여 트래픽을 대상으로 라우팅한다. HTTP 및 HTTPS 트래픽의 고급 로드 밸런싱에 이상적인 ALB 장치는 마이크로 서비스 및 컨테이너 기반 애플리케이션을 비롯한 최신 애플리케이션 아키텍처를 제공하는데 적합한 고급 요청 라우팅을 제공한다.
 ALB는 지정된 사용 사례에서 언급된 짧은 지연 시간 및 높은 처리량 시나리오에 적합하지 않다.
+
+- ALB는 로드밸런서에서 생성된 쿠키만을 지원하며 쿠키의 이름은 AWSALB 이다.
+- Cross-zon Load Balancing이 기본 활성화되어있으며, 사설 인스턴스로 LB하기 위해서는 공용서비스넷이 필요함.
+- ALB는 Cognito와 통합되어 OIDC ID 공급자 인증을 지원함
+
 
 ### 3. Classic Load Balancer
 
@@ -184,6 +198,7 @@ AWS Security Token Service(AWS STS)를 사용하면 AWS 리소스에 대한 액�
 ## 12. CloudFront
 
 - 지리적 차단, 지리적 제한을 사용하면 특정 지리적 위치에 있는 사용자가 CloudFront 배포를 통해 배포된 콘텐츠에 액세스하는 것을 차단할 수 있다. 
+- CloudFront 접근제어는 사용자가 서명된 URL을 사용하여 파일에 액세스하고 OAI를 작성한 후 S3 버킷의 파일에 대한 액세스를 OAI에 제한하도록 구성해야 함.
 
 ## 13. CloudWatch
 
@@ -191,4 +206,38 @@ AWS Security Token Service(AWS STS)를 사용하면 AWS 리소스에 대한 액�
 - CloudWatch Log
 - splunk
 - S3 사용자 정의 스크립트
+
+
+- Kinesis data analytics는 표준 SQL을 사용하여 처리하고 Firehose는 SQL 쿼리를 실행할 수 없음
+
+## 14. AutoScaling
+
+1). AutoScaling 의 조정 정책 (아래 2개 모두 예측 불가능한 상황에 적합)
+    - 대상 추적 조정 정책 : 조정 지표를 선택하고, 대상 값을 설정 (CPU활용도, 네트워크 인터페이스에서 받은/보낸 평균 바이트 수, 대상그룹 내 대상별 요청 수)
+    - 단순 및 단계 조정 정책 : 조정 프로세스를 트리거하는 CloudWatch 경보에 대한 조정 지표와 임계값을 선택하고 위반시 조정 방법을 결정
+
+- AutoScaling은 각 AZ의 인스턴스 수가 균형을 이루지 않을 경우 재조정을 시도함.
+    - 먼저 인스턴스가 없는 AZ에서 인스턴스를 생성한 후, 나머지 AZ에서 같은 수의 인스턴스를 종료함
+- AutoScaling은 손상된 인스턴스가 확인될 경우, 이를 종료한 후 !!!!!! 새로운 인스턴스로 교체함
+
+</br></br>
+
+## 15. EBS
+
+- EBS 볼륨의 성능을 향상시키기 위해서는 프로비져닝된 볼륨을 사용하고, RAID 0 배열에 여러 볼륨을 추가하는 것
+- EBS는 요구사항 증가시 자동으로 증가하지 않으므로, 볼륨크기를 늘린다음 파일 시스템을 확장해야함. -> EFS 의 장점
+
+## 16. Direct Connect
+
+- Direct Connect는 한 지역 내 모든 AZ에 연결할 수 있음
+
+</br></br>
+
+## 17. DynamoDB
+
+1). DynamoDB의 모범 사례
+    - 항목 크기를 작게 유지
+    - 데이터 / 시간에 기반한 작업이 필요한 경우 일별/주별/월별 테이블 생성
+    - 액세스가 빈번한 테이블과 적은 테이블 구분
+    - S3에 400KB를 초과하는 객체를 저장하고 DynamoDB에서 포인터 사용
 
