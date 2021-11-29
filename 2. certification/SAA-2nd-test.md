@@ -185,3 +185,10 @@ AWS Security Token Service(AWS STS)를 사용하면 AWS 리소스에 대한 액�
 
 - 지리적 차단, 지리적 제한을 사용하면 특정 지리적 위치에 있는 사용자가 CloudFront 배포를 통해 배포된 콘텐츠에 액세스하는 것을 차단할 수 있다. 
 
+## 13. CloudWatch
+
+1). CloudWatch 로그 파일에 저장하기 위한 유효한 옵션
+- CloudWatch Log
+- splunk
+- S3 사용자 정의 스크립트
+
