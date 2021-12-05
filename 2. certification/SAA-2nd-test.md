@@ -241,3 +241,6 @@ AWS Security Token Service(AWS STS)를 사용하면 AWS 리소스에 대한 액�
     - 액세스가 빈번한 테이블과 적은 테이블 구분
     - S3에 400KB를 초과하는 객체를 저장하고 DynamoDB에서 포인터 사용
 
+</br></br>
+
+## 18. S3 vpc Endpoint
